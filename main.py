@@ -5,12 +5,12 @@ import glob
 
 import instachat # little module thingy for instagram functions
 
-VERSION = "1.0.1"
+VERSION = "1.0.2" #pretty much meaningless?
 SITEURL = "https://sites.google.com/site/facehighschool455" #remote site
 WAIT = 120 # seconds to wait btwn checks
 LOGFILE = "./steveonline_lg.log"
 LOGGING = True
-
+ENABLED_CLASSES = [2,3]
 
 def fetch_latest():
     page = urllib.request.urlopen(SITEURL)
@@ -25,9 +25,9 @@ def compare_versions(old, new):
 
 class Assignment(object):
     def __init__(self, name, hand_in, grade):
-        self.name = name # string
-        self.hand_in = hand_in # bool
-        self.grade = grade # int
+        self.name = name # the name of the assignment
+        self.hand_in = hand_in # is it hand in? (unused)
+        self.grade = grade # the grade that the assignment belongs to
 
     def __str__(self):
         return str(self.name)
@@ -59,12 +59,10 @@ def generateAssignments(page):
             items.append(assignment)
     return items
 
-
-
 def findLatestAssignment(assignments, grade):
     for assignment in assignments:
         if assignment.grade == grade:
-            return assignment.name #this will retn the first
+            return assignment.name #this will return the first
 
 def logThis(message):
     if LOGGING:
@@ -73,6 +71,7 @@ def logThis(message):
             entry = "LOG." + str(datetime.datetime.now().strftime("%d-%m-%y-%H-%M-%S")) + ": " + message + "\n"
             log.seek(0,0)
             log.write(entry + log_content)
+    print(message)
 
 def initializeArchive():
     # run only if there is no file in archive
@@ -95,7 +94,6 @@ def mainThing():
     try:
         realtime_file = fetch_latest()
     except:
-        print("Error! Wtf! Server is down/You disconnected! Skipping.")
         logThis("Error! Wtf! Server is down/You disconnected! Skipping.")
         return 1234
     isSame = -1
@@ -109,28 +107,24 @@ def mainThing():
             isSame = 0
             break
     if isSame and len(assignmentsForRealtime) == len(assignmentsForLatest): #true: same
-        print("Site is same, skipping")
-        logThis("site is same. skipping.")
+        logThis("Site is same. skipping.")
     else:
-        print("Found different!!")
         logThis("Found different!!")
         initializeArchive() # add new site version to archive
-        instachat.sendMessage("New assignment for " + classes[2] + "! \n" + findLatestAssignment(assignmentsForRealtime, 2), instachat.getPeople() )
-        logThis("SENT! 'New assignment for " + classes[2] + "! " + findLatestAssignment(assignmentsForRealtime, 2) + "to " + str(len(instachat.getPeople())) + " people!")
+        for singleClass in ENABLED_CLASSES:
+            instachat.sendMessage("New assignment for " + classes[singleClass] + "! \n" + findLatestAssignment(assignmentsForRealtime, singleClass), instachat.getPeople() )
+            logThis("SENT! 'New assignment for " + classes[singleClass] + "! " + findLatestAssignment(assignmentsForRealtime, singleClass) + "to " + str(len(instachat.getPeople())) + " people!")
 
 if __name__ == '__main__':
     logThis("Program start! Version " + VERSION)
+    logThis("Enabled classes: " + str(ENABLED_CLASSES))
     if not os.listdir("archives/"): #aka empty
-        print("First run or flushed, initializing archive.")
+        logThis("First run or flushed, initializing archive.")
         initializeArchive()
 
     while 1:
         print("Running main checker..")
         startTime = datetime.datetime.now()
         mainThing()
-        print("done checker in "+ str(datetime.datetime.now()-startTime))
         logThis("done checker in " + str(datetime.datetime.now()-startTime))
-        print("Waiting for cycle...")
         time.sleep(WAIT)
-        print("Done wait!")
-
