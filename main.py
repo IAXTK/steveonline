@@ -10,7 +10,8 @@ SITEURL = "https://sites.google.com/site/facehighschool455" #remote site
 WAIT = 120 # seconds to wait btwn checks
 LOGFILE = "./steveonline_lg.log"
 LOGGING = True
-ENABLED_CLASSES = [2,3]
+ENABLED_GRADES = [2,3]
+FLUSH_EVERY = -1 #flush the archives 
 
 def fetch_latest():
     page = urllib.request.urlopen(SITEURL)
@@ -32,7 +33,7 @@ class Assignment(object):
     def __str__(self):
         return str(self.name)
 
-classes = { # which <ol> is what class
+grades = { # which <ol> is what grade
     0: 'Math 9E',
     1: 'Science 9E',
     2: 'Math 8E',
@@ -96,28 +97,24 @@ def mainThing():
     except:
         logThis("Error! Wtf! Server is down/You disconnected! Skipping.")
         return 1234
-    isSame = -1
     assignmentsForRealtime = generateAssignments(realtime_file)
     assignmentsForLatest = generateAssignments(latest_file)
 
-    for i in range(len(generateAssignments(realtime_file))):
-        if assignmentsForRealtime[i].name == assignmentsForLatest[i].name:
-            isSame = 1
+    for grade in ENABLED_GRADES:
+        if (findLatestAssignment(assignmentsForRealtime, grade) == findLatestAssignment(assignmentsForLatest, grade) and 
+                len(assignmentsForRealtime) == len(assignmentsForLatest) ):
+            
+            logThis("The site is same, skipping.")
+    
         else:
-            isSame = 0
-            break
-    if isSame and len(assignmentsForRealtime) == len(assignmentsForLatest): #true: same
-        logThis("Site is same. skipping.")
-    else:
-        logThis("Found different!!")
-        initializeArchive() # add new site version to archive
-        for singleClass in ENABLED_CLASSES:
-            instachat.sendMessage("New assignment for " + classes[singleClass] + "! \n" + findLatestAssignment(assignmentsForRealtime, singleClass), instachat.getPeople() )
-            logThis("SENT! 'New assignment for " + classes[singleClass] + "! " + findLatestAssignment(assignmentsForRealtime, singleClass) + "to " + str(len(instachat.getPeople())) + " people!")
+            logThis("Found different!!")
+            initializeArchive() # add new site version to archive
+            instachat.sendMessage("New assignment for " + grades[grade] + "! \n" + findLatestAssignment(assignmentsForRealtime, grade), instachat.getPeople() )
+            logThis("SENT! 'New assignment for " + grades[grade] + "! " + findLatestAssignment(assignmentsForRealtime, grade) + "to " + str(len(instachat.getPeople())) + " people!")
 
 if __name__ == '__main__':
     logThis("Program start! Version " + VERSION)
-    logThis("Enabled classes: " + str(ENABLED_CLASSES))
+    logThis("Enabled grades: " + str(ENABLED_GRADES))
     if not os.listdir("archives/"): #aka empty
         logThis("First run or flushed, initializing archive.")
         initializeArchive()
