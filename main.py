@@ -5,7 +5,7 @@ import glob
 
 import instachat # little module thingy for instagram functions
 
-VERSION = "1.0.2" #pretty much meaningless?
+VERSION = "1.0.3" #pretty much meaningless?
 SITEURL = "https://sites.google.com/site/facehighschool455" #remote site
 WAIT = 120 # seconds to wait btwn checks
 LOGFILE = "./steveonline_lg.log"
@@ -16,12 +16,6 @@ FLUSH_EVERY = -1 #flush the archives
 def fetch_latest():
     page = urllib.request.urlopen(SITEURL)
     return str(page.read(), 'utf-8')
-
-def compare_versions(old, new):
-    if hash(old) == hash(new): #compare
-        return True
-    else:
-        return False
 
 
 class Assignment(object):
@@ -75,7 +69,6 @@ def logThis(message):
     print(message)
 
 def initializeArchive():
-    # run only if there is no file in archive
     filename = 'archives/' + str(datetime.datetime.now().strftime("%d-%m-%y-%H-%M-%S")) + '.sitefile'
     init_file = open(filename, 'w')
     init_file.write(fetch_latest())
@@ -125,3 +118,8 @@ if __name__ == '__main__':
         mainThing()
         logThis("done checker in " + str(datetime.datetime.now()-startTime))
         time.sleep(WAIT)
+        if len(glob.glob('archives/*.sitefile')) > FLUSH_EVERY:
+            for sitefile in glob.glob('archives/*.sitefile'):
+                os.remove(sitefile)
+            logThis("Flushed cache!")
+            initializeArchive()
