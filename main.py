@@ -5,13 +5,13 @@ import glob
 
 import instachat # little module thingy for instagram functions
 
-VERSION = "1.0.3" #pretty much meaningless?
+VERSION = "1.0.4" #pretty much meaningless?
 SITEURL = "https://sites.google.com/site/facehighschool455" #remote site
 WAIT = 120 # seconds to wait btwn checks
 LOGFILE = "./steveonline_lg.log"
 LOGGING = True
 ENABLED_GRADES = [2,3]
-FLUSH_EVERY = -1 #flush the archives 
+FLUSH_EVERY = 999999 #flush the archives when files > n
 
 def fetch_latest():
     page = urllib.request.urlopen(SITEURL)
@@ -60,6 +60,9 @@ def findLatestAssignment(assignments, grade):
             return assignment.name #this will return the first
 
 def logThis(message):
+    if not os.path.isfile(LOGFILE):
+        with open(LOGFILE, 'w') as log:
+            log.write("Start logfile!")
     if LOGGING:
         with open(LOGFILE, 'r+') as log:
             log_content = log.read()
@@ -69,6 +72,8 @@ def logThis(message):
     print(message)
 
 def initializeArchive():
+    if not os.path.isdir('./archives'):
+        os.mkdir("./archives")
     filename = 'archives/' + str(datetime.datetime.now().strftime("%d-%m-%y-%H-%M-%S")) + '.sitefile'
     init_file = open(filename, 'w')
     init_file.write(fetch_latest())
@@ -94,10 +99,9 @@ def mainThing():
     assignmentsForLatest = generateAssignments(latest_file)
 
     for grade in ENABLED_GRADES:
-        if (findLatestAssignment(assignmentsForRealtime, grade) == findLatestAssignment(assignmentsForLatest, grade) and 
-                len(assignmentsForRealtime) == len(assignmentsForLatest) ):
+        if (findLatestAssignment(assignmentsForRealtime, grade) == findLatestAssignment(assignmentsForLatest, grade) ):
             
-            logThis("The site is same, skipping.")
+            logThis("Assignments for " + grades[grade] + " are identical, skipping...")
     
         else:
             logThis("Found different!!")
@@ -109,7 +113,7 @@ if __name__ == '__main__':
     logThis("Program start! Version " + VERSION)
     logThis("Enabled grades: " + str(ENABLED_GRADES))
     if not os.listdir("archives/"): #aka empty
-        logThis("First run or flushed, initializing archive.")
+        logThis("First run after , initializing archive.")
         initializeArchive()
 
     while 1:
@@ -121,5 +125,5 @@ if __name__ == '__main__':
         if len(glob.glob('archives/*.sitefile')) > FLUSH_EVERY:
             for sitefile in glob.glob('archives/*.sitefile'):
                 os.remove(sitefile)
-            logThis("Flushed cache!")
+            logThis("Flushed archives! (reached limit)")
             initializeArchive()
