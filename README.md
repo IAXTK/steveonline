@@ -3,6 +3,8 @@ An Instagram that texts you every time there's new homework from Mr. Steve.
 
 Every set amount of time, (by default 2 minutes), the script will download the homepage of the site (https://sites.google.com/site/facehighschool455). It parses it, and finds the latest assignment to message it to the followers of the instagram account *mr.steve.online*.
 
+### Disclaimer: This GitHub repo mainly exists so I can easily clone the latest sources to anywhere, so expect random changes / bugs 
+
 ## Dependencies
     * Python 3 (tested on 3.7.0)
     * BeautifulSoup4
