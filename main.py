@@ -107,7 +107,8 @@ def mainThing():
             logThis("Found different!!")
             initializeArchive() # add new site version to archive
             instachat.sendMessage("New assignment for " + grades[grade] + "! \n" + findLatestAssignment(assignmentsForRealtime, grade), instachat.getPeople() )
-            logThis("SENT! 'New assignment for " + grades[grade] + "! " + findLatestAssignment(assignmentsForRealtime, grade) + "to " + str(len(instachat.getPeople())) + " people!")
+            instachat.makeStory("New assignment for " + grades[grade] + "! \n" + findLatestAssignment(assignmentsForRealtime, grade))
+            logThis("SENT! 'New assignment for " + grades[grade] + "! " + findLatestAssignment(assignmentsForRealtime, grade) + "to " + str(len(instachat.getPeople())) + " people! (and story)")
 
 if __name__ == '__main__':
     logThis("Program start! Version " + VERSION)
