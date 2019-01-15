@@ -8,6 +8,7 @@ Every set amount of time, (by default 2 minutes), the script will download the h
 ## Dependencies
     * Python 3 (tested on 3.7.0)
     * BeautifulSoup4
+    * Pillow (whatever the latest is idk)
     * InstagramAPI (make sure to use my fork for it to not crash and burn for lack of custom features)
 
 ## Helpful hints
