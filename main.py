@@ -5,7 +5,7 @@ import glob
 
 import instachat # little module thingy for instagram functions
 
-VERSION = "1.0.4" #pretty much meaningless?
+VERSION = "1.0.5" #pretty much meaningless?
 SITEURL = "https://sites.google.com/site/facehighschool455" #remote site
 WAIT = 120 # seconds to wait btwn checks
 LOGFILE = "./steveonline_lg.log"
