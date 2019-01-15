@@ -35,7 +35,7 @@ def makeStory(message):
         pass
     else:
         raise LoginError("Cannot login!")
-    filename = "./stories/" + hashlib.sha224(message).hexdigest() + ".jpg"
+    filename = "./stories/" + hashlib.sha224(message.encode()).hexdigest() + ".jpg"
     story3.makeStory(message, filename)
     InstagramAPI.uploadStoryPhoto(api, filename)
 
