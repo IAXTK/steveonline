@@ -4,7 +4,7 @@ from PIL import ImageDraw
 import textwrap
 
 
-def makeStoryImage(text, outputPath):
+def makeStory(text, outputPath):
     text = textwrap.wrap(text, 35) #sanitize text with 
     text = '\n'.join(text)         #newlines and stuff
 
@@ -16,4 +16,4 @@ def makeStoryImage(text, outputPath):
     img.save(outputPath) #save it
 
 if __name__ == '__main__':
-    makeStoryImage("This is a demonstration of story3.py. Im guessing that this is pretty close to the original before i lost it....", 'demo.jpg')
+    makeStory("This is a demonstration of story3.py. Im guessing that this is pretty close to the original before i lost it....", 'demo.jpg')
