@@ -1,5 +1,5 @@
 from InstagramAPI import InstagramAPI
-import story3 # yay finally back
+#story3 gone... macpro branch that's why
 import hashlib
 
 class LoginError(Exception):
@@ -25,19 +25,6 @@ def sendMessage(message, recipients):
     print("done sending!")
     return 0
 
-def makeStory(message):
-    #get credentials from file!
-    user_name = open("./credentials.txt", "r").readlines()[0]
-    password = open("./credentials.txt", "r").readlines()[1]
-
-    api = InstagramAPI(user_name, password)
-    if (api.login()):
-        pass
-    else:
-        raise LoginError("Cannot login!")
-    filename = "./stories/" + hashlib.sha224(message.encode()).hexdigest() + ".jpg"
-    story3.makeStory(message, filename)
-    InstagramAPI.uploadStoryPhoto(api, filename)
 
 def getPeople():
     #get credentials from file!
