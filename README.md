@@ -1,4 +1,6 @@
-# steveonline
+# steveonline - mac edition
+** note that this version DOES NOT include the story feature, as I didn't feel like compiling PIL from source on 10.6 **
+
 An Instagram that texts you every time there's new homework from Mr. Steve.
 
 Every set amount of time, (by default 2 minutes), the script will download the homepage of the site (https://sites.google.com/site/facehighschool455). It parses it, and finds the latest assignment to message it to the followers of the instagram account *mr.steve.online*.
